@@ -25,6 +25,8 @@ public protocol ChartViewDelegate
     /// - parameter highlight: The corresponding highlight object that contains information about the highlighted position such as dataSetIndex etc.
     @objc optional func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight)
     
+    @objc optional func chartValueDeselected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight)
+    
     // Called when nothing has been selected or an "un-select" has been made.
     @objc optional func chartValueNothingSelected(_ chartView: ChartViewBase)
     
@@ -38,6 +40,8 @@ public protocol ChartViewDelegate
 open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
 {
     // MARK: - Properties
+    
+    open var isMultiSelection: Bool = true
     
     /// - returns: The object representing all x-labels, this method can be used to
     /// acquire the XAxis object and modify it (e.g. change the position of the
@@ -538,10 +542,14 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
     {
         var entry: ChartDataEntry?
         var h = highlight
+        var isHighlightAdded = false
         
         if h == nil
         {
-            _indicesToHighlight.removeAll(keepingCapacity: false)
+            if _indicesToHighlight.count > 0 {
+                _indicesToHighlight.removeLast()
+            }
+            lastHighlighted = nil
         }
         else
         {
@@ -554,7 +562,19 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
             }
             else
             {
-                _indicesToHighlight = [h!]
+                // Remove Highlight if it were selecter else add to array
+                if isMultiSelection {
+                    if let index = _indicesToHighlight.index(of: h!) {
+                        _indicesToHighlight.remove(at: index)
+                        lastHighlighted = nil
+                    } else {
+                        _indicesToHighlight.append(h!)
+                        isHighlightAdded = true
+                    }
+                } else {
+                    _indicesToHighlight = [h!]
+                    isHighlightAdded = true
+                }
             }
         }
         
@@ -567,7 +587,12 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
             else
             {
                 // notify the listener
-                delegate!.chartValueSelected?(self, entry: entry!, highlight: h!)
+                if isHighlightAdded {
+                    delegate!.chartValueSelected?(self, entry: entry!, highlight: h!)
+                } else {
+                    delegate!.chartValueDeselected?(self, entry: entry!, highlight: h!)
+                }
+                
             }
         }
         
