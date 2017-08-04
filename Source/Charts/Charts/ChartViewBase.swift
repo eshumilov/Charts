@@ -529,6 +529,12 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
         }
     }
     
+    open func removeHighlight(_ highlight: Highlight) {
+        highlightValues(highlighted.filter{ item in
+            item != highlight
+        })
+    }
+    
     /// Highlights the values represented by the provided Highlight object
     /// This method *will not* call the delegate.
     /// - parameter highlight: contains information about which entry should be highlighted
