@@ -280,8 +280,7 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
         _data = nil
         _offsetsCalculated = false
         _indicesToHighlight.removeAll()
-	    lastHighlighted = nil
-	
+
         setNeedsDisplay()
     }
     
@@ -460,15 +459,6 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
     {
         // set the indices to highlight
         _indicesToHighlight = highs ?? [Highlight]()
-        
-        if _indicesToHighlight.isEmpty
-        {
-            self.lastHighlighted = nil
-        }
-        else
-        {
-            self.lastHighlighted = _indicesToHighlight[0]
-        }
 
         // redraw the chart
         setNeedsDisplay()
@@ -555,7 +545,6 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
             if _indicesToHighlight.count > 0 {
                 _indicesToHighlight.removeLast()
             }
-            lastHighlighted = nil
         }
         else
         {
@@ -572,7 +561,6 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
                 if isMultiSelection {
                     if let index = _indicesToHighlight.index(of: h!) {
                         _indicesToHighlight.remove(at: index)
-                        lastHighlighted = nil
                     } else {
                         _indicesToHighlight.append(h!)
                         isHighlightAdded = true
@@ -619,9 +607,6 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
         
         return self.highlighter?.getHighlight(x: pt.x, y: pt.y)
     }
-
-    /// The last value that was highlighted via touch.
-    open var lastHighlighted: Highlight?
   
     // MARK: - Markers
 
