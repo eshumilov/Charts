@@ -315,7 +315,8 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
             {
                 context.setStrokeColor(borderColor.cgColor)
                 context.setLineWidth(borderWidth)
-                context.stroke(barRect)
+                let topLine = CGRect(origin: barRect.origin, size: CGSize(width: barRect.size.width, height: 0))
+                context.stroke(topLine)
             }
         }
         

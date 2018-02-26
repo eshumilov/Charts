@@ -267,7 +267,9 @@ open class HorizontalBarChartRenderer: BarChartRenderer
             {
                 context.setStrokeColor(borderColor.cgColor)
                 context.setLineWidth(borderWidth)
-                context.stroke(barRect)
+                let topLineOrigin = CGPoint(x: barRect.maxX, y: barRect.origin.y)
+                let topLine = CGRect(origin: topLineOrigin, size: CGSize(width: 0, height: barRect.size.height))
+                context.stroke(topLine)
             }
         }
         
